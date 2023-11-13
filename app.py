@@ -24,6 +24,15 @@ SELECT * FROM beverages
 CROSS JOIN food_items
 """
 
+with st.sidebar:
+    option = st.selectbox(
+        'What would you like to review ?',
+        ['Joins', 'Group By', 'Windows Functions'],
+        index=None,
+        placeholder="Select a theme ...",
+    )
+    st.write('You selected:', option)
+
 solution = duckdb.sql(answer).df()
 
 st.header("Enter you code:")
