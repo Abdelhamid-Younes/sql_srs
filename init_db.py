@@ -10,7 +10,7 @@ con = duckdb.connect(database="data/sql_tables_exercice", read_only=False)
 
 data = {
     "theme": ["Cross_joins", "window_functions"],
-    "exercice_name": ["beverages_and_food", "simple_window"],
+    "exercise_name": ["beverages_and_food", "simple_window"],
     "tables": [["beverages", "food_items"], "simple_window"],
     "last_review":["1970-01-01", "1970-01-01"]
 }

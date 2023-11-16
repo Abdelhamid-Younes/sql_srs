@@ -1,6 +1,7 @@
 # pylint: disable=missing-module-docstring
 import duckdb
 import streamlit as st
+import ast
 
 
 con = duckdb.connect(database="data/sql_tables_exercice", read_only=False)
@@ -13,23 +14,24 @@ CROSS JOIN food_items
 with st.sidebar:
     theme = st.selectbox(
         "What would you like to review ?",
-        ["Cross_joins", "Group By", "Windows Functions"],
+        ["Cross_joins", "Group By", "window_functions"],
         index=None,
         placeholder="Select a theme ...",
     )
     st.write("You selected:", theme)
 
-    exercice = con.execute(f"SELECT * FROM memory_state WHERE theme = '{theme}'").df()
-    st.write(exercice)
+    exercise = con.execute(f"SELECT * FROM memory_state WHERE theme = '{theme}'").df()
+    st.write(exercise)
 
 #solution_df = duckdb.sql(ANSWER_STR).df()
 
 st.header("Enter you code:")
 query = st.text_area(label="Your SQL code here", key="user_input")
-# if query:
-#     result = duckdb.sql(query).df()
-#     st.dataframe(result)
-#
+if query:
+    result = con.execute(query).df()
+    st.dataframe(result)
+    print("omughffhello")
+
 #     try:
 #         result = result[solution_df.columns]
 #         st.dataframe(result.compare(solution_df))
@@ -41,15 +43,17 @@ query = st.text_area(label="Your SQL code here", key="user_input")
 #     if n_lines_difference != 0:
 #         st.write(f"result has a {n_lines_difference} lines difference with solution_df")
 #
-# tab2, tab3 = st.tabs(["Tables", "Solution"])
+tab2, tab3 = st.tabs(["Tables", "Solution"])
 #
-# with tab2:
-#     st.write("Table : beverages")
-#     st.dataframe(beverages)
-#     st.write("Table: food_items")
-#     st.dataframe(food_items)
-#     st.write("Expected:")
-#     st.dataframe(solution_df)
-#
-# with tab3:
-#     st.write(ANSWER_STR)
+with tab2:
+    exercise_tables = ast.literal_eval(exercise.loc[0, "tables"])
+    for table in exercise_tables:
+        st.write(f"Table : {table}")
+        table_df = con.execute(f"SELECT * FROM {table}").df()
+        st.dataframe(table_df)
+
+with tab3:
+    exercise_name = exercise.loc[0, "exercise_name"]
+    with open(f"answers/{exercise_name}.sql", "r") as f:
+        answer = f.read()
+    st.write(answer)
