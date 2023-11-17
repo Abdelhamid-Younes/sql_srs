@@ -2,17 +2,17 @@ import io
 import pandas as pd
 import duckdb
 
-con = duckdb.connect(database="data/sql_tables_exercice", read_only=False)
+con = duckdb.connect(database="data/sql_tables_exercise", read_only=False)
 
 # ---------------------------------------------------------------
 # EXERCISES LIST
 # ----------------------------------------------------------------
 
 data = {
-    "theme": ["Cross_joins", "window_functions"],
-    "exercise_name": ["beverages_and_food", "simple_window"],
-    "tables": [["beverages", "food_items"], "simple_window"],
-    "last_review": ["1970-01-01", "1970-01-01"],
+    "theme": ["Cross_joins", "Cross_joins"],
+    "exercise_name": ["beverages_and_food", "sizes_and_trademarks"],
+    "tables": [["beverages", "food_items"], ["sizes", "trademarks"]],
+    "last_review": ["1980-01-01", "1970-01-01"],
 }
 memory_state_df = pd.DataFrame(data)
 con.execute("CREATE TABLE IF NOT EXISTS memory_state AS SELECT * FROM memory_state_df ")
@@ -38,3 +38,24 @@ muffin,3
 """
 food_items = pd.read_csv(io.StringIO(CSV2))
 con.execute("CREATE TABLE IF NOT EXISTS food_items AS SELECT * FROM food_items")
+
+sizes = """
+size
+XS
+M
+L
+XL
+"""
+sizes = pd.read_csv(io.StringIO(sizes))
+con.execute("CREATE TABLE IF NOT EXISTS sizes AS SELECT * FROM sizes")
+
+
+trademarks = """
+trademark
+Nike
+Asphalte
+Abercrombie
+Lewis
+"""
+trademarks = pd.read_csv(io.StringIO(trademarks))
+con.execute("CREATE TABLE IF NOT EXISTS trademarks AS SELECT * FROM trademarks")

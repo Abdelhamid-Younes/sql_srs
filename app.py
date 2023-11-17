@@ -1,10 +1,8 @@
 # pylint: disable=missing-module-docstring
 import duckdb
 import streamlit as st
-import ast
 
-
-con = duckdb.connect(database="data/sql_tables_exercice", read_only=False)
+con = duckdb.connect(database="data/sql_tables_exercise", read_only=False)
 
 ANSWER_STR = """
 SELECT * FROM beverages
@@ -20,7 +18,12 @@ with st.sidebar:
     )
     st.write("You selected:", theme)
 
-    exercise = con.execute(f"SELECT * FROM memory_state WHERE theme = '{theme}'").df()
+    exercise = (
+        con.execute(f"SELECT * FROM memory_state WHERE theme = '{theme}'")
+        .df()
+        .sort_values("last_review")
+        .reset_index()
+    )
     st.write(exercise)
 
     exercise_name = exercise.loc[0, "exercise_name"]
@@ -48,11 +51,11 @@ if query:
 tab2, tab3 = st.tabs(["Tables", "Solution"])
 #
 with tab2:
-    exercise_tables = ast.literal_eval(exercise.loc[0, "tables"])
+    exercise_tables = exercise.loc[0, "tables"]
     for table in exercise_tables:
         st.write(f"Table : {table}")
         table_df = con.execute(f"SELECT * FROM {table}").df()
         st.dataframe(table_df)
 
 with tab3:
-    st.write(answer)
+    st.text(answer)
