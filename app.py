@@ -22,13 +22,17 @@ with st.sidebar:
         index=None,
         placeholder="Select a theme ...",
     )
-    st.write("You selected:", theme)
+    if theme:
+        st.write("You selected:", theme)
+        select_exercise_query = f"SELECT * FROM memory_state WHERE theme = '{theme}'"
+    else:
+        select_exercise_query = f"SELECT * FROM memory_state"
 
     exercise = (
-        con.execute(f"SELECT * FROM memory_state WHERE theme = '{theme}'")
+        con.execute(select_exercise_query)
         .df()
         .sort_values("last_review")
-        .reset_index()
+        .reset_index(drop=True)
     )
     st.write(exercise)
 
