@@ -5,7 +5,6 @@ import logging
 import duckdb
 import streamlit as st
 
-
 if "data" not in os.listdir():
     logging.error(os.listdir())
     logging.error("creating folder data")
