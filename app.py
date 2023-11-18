@@ -1,13 +1,20 @@
 # pylint: disable=missing-module-docstring
+
+import os
+import logging
 import duckdb
 import streamlit as st
 
-con = duckdb.connect(database="data/sql_tables_exercise", read_only=False)
 
-ANSWER_STR = """
-SELECT * FROM beverages
-CROSS JOIN food_items
-"""
+if "data" not in os.listdir():
+    logging.error(os.listdir())
+    logging.error("creating folder data")
+    os.mkdir("data")
+
+if "sql_tables_exercise.duckdb" not in os.listdir("data"):
+    exec(open("init_db.py").read())
+
+con = duckdb.connect(database="data/sql_tables_exercise.duckdb", read_only=False)
 
 with st.sidebar:
     theme = st.selectbox(
