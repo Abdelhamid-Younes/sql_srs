@@ -5,7 +5,6 @@ import logging
 import duckdb
 import streamlit as st
 
-
 if "data" not in os.listdir():
     logging.error(os.listdir())
     logging.error("creating folder data")
@@ -17,19 +16,24 @@ if "sql_tables_exercise.duckdb" not in os.listdir("data"):
 con = duckdb.connect(database="data/sql_tables_exercise.duckdb", read_only=False)
 
 with st.sidebar:
+    available_themes_df = con.execute("SELECT DISTINCT theme FROM memory_state").df()
     theme = st.selectbox(
         "What would you like to review ?",
-        ["Cross_joins", "Group By", "window_functions"],
+        available_themes_df["theme"],
         index=None,
         placeholder="Select a theme ...",
     )
-    st.write("You selected:", theme)
+    if theme:
+        st.write("You selected:", theme)
+        select_exercise_query = f"SELECT * FROM memory_state WHERE theme = '{theme}'"
+    else:
+        select_exercise_query = f"SELECT * FROM memory_state"
 
     exercise = (
-        con.execute(f"SELECT * FROM memory_state WHERE theme = '{theme}'")
+        con.execute(select_exercise_query)
         .df()
         .sort_values("last_review")
-        .reset_index()
+        .reset_index(drop=True)
     )
     st.write(exercise)
 
