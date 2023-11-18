@@ -2,7 +2,7 @@ import io
 import pandas as pd
 import duckdb
 
-con = duckdb.connect(database="data/sql_tables_exercise", read_only=False)
+con = duckdb.connect(database="data/sql_tables_exercise.duckdb", read_only=False)
 
 # ---------------------------------------------------------------
 # EXERCISES LIST
@@ -59,3 +59,5 @@ Lewis
 """
 trademarks = pd.read_csv(io.StringIO(trademarks))
 con.execute("CREATE TABLE IF NOT EXISTS trademarks AS SELECT * FROM trademarks")
+
+con.close()
